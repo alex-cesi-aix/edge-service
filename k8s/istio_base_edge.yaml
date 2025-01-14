@@ -1,0 +1,45 @@
+#PeerAuthentication à configurer dans le cas où K8s (kubelet) doit accéder "aux sondes" exposées par des pods d'application
+#apiVersion: security.istio.io/v1
+#kind: PeerAuthentication
+#metadata:
+#  name: default
+#spec:
+#  mtls:
+#    mode: PERMISSIVE
+#---
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: polar-gw
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - polarbookshop.io
+      port:
+        name: https
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: polar-certificate
+        mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: polar-vs
+spec:
+  gateways:
+    - polar-gw
+  hosts:
+    - polarbookshop.io
+  http:
+    #- match:
+        #- uri:
+            #prefix: /
+      - route:
+          - destination:
+              host: edge-service
+              port:
+                number: 80
