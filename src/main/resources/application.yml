@@ -39,7 +39,7 @@ spring:
           max-idle-time: 15s #durée de vie max d'une connexion non utilisée dans le pool
           max-life-time: 60s #durée de vie max d'une connexion dans le pool
       default-filters:
-        - name: SaveSession
+        - SaveSession
         - name: RequestRateLimiter
           args:
             redis-rate-limiter:
